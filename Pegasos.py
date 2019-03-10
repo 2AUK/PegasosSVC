@@ -23,8 +23,8 @@ class SVC(object):
         """performs SGD for computing minimised w as described in Pegasos paper"""
         m, n_features = self.X_train.shape[0], self.X_train.shape[1]
         self.w = np.zeros(n_features)
-        for i in range(T):
-            eta = 1 / self.gamma * (i+1)
+        for i in range(1, T+1):
+            eta = 1. / self.gamma * i
             j = np.random.choice(m, 1)[0]
             x, y = self.X_train[j], self.y_train[j]
             if y*(self.w.dot(x)) < 1:
@@ -34,10 +34,13 @@ class SVC(object):
                 
 
 if __name__ == "__main__":
-    svc = SVC(0.001, 100)
+    svc = SVC(1, 1)
     all_data = datasets.load_breast_cancer()
     X_train, X_test, y_train, y_test = train_test_split(all_data.data, all_data.target, test_size=0.3, random_state=109)
     svc.X_train = X_train
+    y_train[y_train == 0] = -1
+    y_test[y_test == 0] = -1
     svc.y_train = y_train
-    svc.fit(1000)
+    svc.fit(10)
     print(svc.predict(X_test))
+    print(y_test)
